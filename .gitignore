@@ -19,6 +19,7 @@
 
 # production
 /build
+novera-fits-firebase-adminsdk.json
 
 # misc
 .DS_Store
