@@ -2,58 +2,64 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Logo from "@/assets/images/NoveraFits.png";
+import { Lock } from "lucide-react";
 
-export default function AdminLogin() {
+export default function AdminLoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            router.push("/admin");
-        } catch (err: any) {
-            console.error(err);
-            setError("Invalid credentials. Are you sure you are an admin?");
-        }
+        setLoading(true);
+
+        // Mock authentication
+        setTimeout(() => {
+            router.push("/admin/dashboard");
+        }, 1000);
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-secondary/20">
-            <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-center">Admin Login</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleLogin} className="space-y-4">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-neutral-950">
+            <div className="w-full max-w-sm p-8 space-y-8 bg-white dark:bg-black border rounded-2xl shadow-sm">
+                <div className="text-center space-y-2">
+                    <img src={Logo.src} alt="NoveraFits" className="h-12 w-auto mx-auto mb-6" />
+                    <h1 className="text-2xl font-semibold tracking-tight">Admin Login</h1>
+                    <p className="text-sm text-muted-foreground">Enter your credentials to access the panel.</p>
+                </div>
+
+                <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
                         <Input
                             type="email"
-                            placeholder="Email"
+                            placeholder="admin@noverafits.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
+                    </div>
+                    <div className="space-y-2">
                         <Input
                             type="password"
-                            placeholder="Password"
+                            placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
-                        <Button type="submit" className="w-full">
-                            Login
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
+                    </div>
+                    <Button type="submit" className="w-full" disabled={loading}>
+                        {loading ? "Signing in..." : "Sign In"} <Lock className="ml-2 h-4 w-4" />
+                    </Button>
+                </form>
+
+                <div className="text-center text-xs text-muted-foreground">
+                    <p>Protected System. Unauthorized access is prohibited.</p>
+                </div>
+            </div>
         </div>
     );
 }
