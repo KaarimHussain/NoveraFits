@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, User, Package, Menu } from "lucide-react";
+import { ShoppingBag, User, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Logo from "@/assets/images/NoveraFits.png";
@@ -52,8 +52,12 @@ export function Header() {
                     {/* Mobile Menu Trigger */}
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="ghost" size="icon" className="lg:hidden">
-                                <Menu className="h-5 w-5" />
+                            <Button variant="ghost" size="icon" className="lg:hidden hover:bg-transparent group">
+                                <div className="flex flex-col gap-1.5 items-end">
+                                    <span className="block h-0.5 w-6 bg-foreground transition-all duration-300 group-hover:w-4" />
+                                    <span className="block h-0.5 w-4 bg-foreground transition-all duration-300 group-hover:w-6" />
+                                    <span className="block h-0.5 w-5 bg-foreground transition-all duration-300 group-hover:w-4" />
+                                </div>
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="right">
@@ -66,6 +70,7 @@ export function Header() {
                                 <Link href="/categories" className="text-lg font-medium hover:text-primary">Categories</Link>
                                 <Link href="/about" className="text-lg font-medium hover:text-primary">About</Link>
                                 <Link href="/order-tracking" className="text-lg font-medium hover:text-primary pt-4 border-t mt-2">Track Order</Link>
+                                <Link href="/cart" className="text-lg font-medium hover:text-primary">Cart</Link>
                             </nav>
                         </SheetContent>
                     </Sheet>

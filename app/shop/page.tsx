@@ -20,9 +20,9 @@ export default function ShopPage() {
                 </div>
             </div>
 
-            <div className="flex gap-10 relative">
+            <div className="flex gap-10 relative h-full">
                 {/* Desktop Sidebar */}
-                <div className="hidden md:block w-64 flex-shrink-0">
+                <div className="hidden md:block sticky top-0 w-64 shrink-0">
                     <FilterSidebar />
                 </div>
 
