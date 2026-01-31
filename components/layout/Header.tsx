@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, User, Package } from "lucide-react";
+import { ShoppingBag, User, Package, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Logo from "@/assets/images/NoveraFits.png";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ClientOnlyBadge } from "./ClientOnlyBadge";
 
 export function Header() {
     return (
@@ -39,13 +40,18 @@ export function Header() {
                         </Button>
                     </Link>
 
+                    {/* Favourites */}
+                    <Link href="/favourites" title="Favourites">
+                        <Button variant="ghost" size="icon" aria-label="Favourites">
+                            <Heart className="h-5 w-5" />
+                        </Button>
+                    </Link>
+
                     {/* Cart */}
                     <Link href="/cart">
                         <Button variant="ghost" size="icon" className="relative" aria-label="Cart">
                             <ShoppingBag className="h-5 w-5" />
-                            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-secondary text-secondary-foreground hover:bg-secondary">
-                                2
-                            </Badge>
+                            <ClientOnlyBadge />
                         </Button>
                     </Link>
 

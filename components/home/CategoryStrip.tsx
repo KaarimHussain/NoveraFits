@@ -2,43 +2,51 @@
 
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-const categories = [
-    {
-        name: "Dresses",
-        href: "/shop?cat=dresses",
-        image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=800&auto=format&fit=crop",
-        count: "42 items"
-    },
-    {
-        name: "Tops",
-        href: "/shop?cat=tops",
-        image: "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?q=80&w=800&auto=format&fit=crop",
-        count: "36 items"
-    },
-    {
-        name: "Activewear",
-        href: "/shop?cat=activewear",
-        image: "https://images.unsplash.com/photo-1518310383802-640c2de311b2?q=80&w=800&auto=format&fit=crop",
-        count: "18 items"
-    },
-    {
-        name: "Shoes",
-        href: "/shop?cat=shoes",
-        image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=800&auto=format&fit=crop",
-        count: "24 items"
-    },
-    {
-        name: "Accessories",
-        href: "/shop?cat=accessories",
-        image: "https://images.unsplash.com/photo-1576053139778-7e32f2ae3cfd?q=80&w=800&auto=format&fit=crop",
-        count: "50+ items"
-    },
-];
+interface Category {
+    id: string;
+    name: string;
+    image?: string;
+    description?: string;
+}
 
 export function CategoryStrip() {
     const [emblaRef] = useEmblaCarousel({ align: "start", dragFree: true });
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "categories"));
+                const data: Category[] = [];
+                querySnapshot.forEach((doc) => {
+                    data.push({ id: doc.id, ...doc.data() } as Category);
+                });
+                setCategories(data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
+    if (loading) {
+        return (
+            <section className="py-20 border-b bg-background flex justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </section>
+        );
+    }
+
+    if (categories.length === 0) return null;
 
     return (
         <section className="py-20 border-b bg-background">
@@ -55,24 +63,24 @@ export function CategoryStrip() {
 
                 <div className="select-none overflow-hidden p-1 -m-1" ref={emblaRef}>
                     <div className="flex gap-4">
-                        {categories.map((cat, index) => (
+                        {categories.map((cat) => (
                             <Link
-                                key={cat.name}
-                                href={cat.href}
-                                className="group relative flex-[0_0_280px] sm:flex-[0_0_320px] aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 min-w-0"
+                                key={cat.id}
+                                href={`/shop?category=${cat.id}`}
+                                className="group relative flex-[0_0_280px] sm:flex-[0_0_320px] aspect-3/4 overflow-hidden rounded-xl bg-gray-100 min-w-0"
                             >
                                 <img
-                                    src={cat.image}
+                                    src={cat.image || "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=800&auto=format&fit=crop"} // Fallback image
                                     alt={cat.name}
                                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/0 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
 
                                 <div className="absolute bottom-0 left-0 p-6 w-full transform transition-transform duration-300 group-hover:-translate-y-2">
                                     <h3 className="text-xl font-bold text-white mb-1">{cat.name}</h3>
                                     <p className="text-xs text-white/80 font-medium opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 delay-75">
-                                        {cat.count}
+                                        View Products
                                     </p>
                                 </div>
                             </Link>

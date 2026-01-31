@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 import Favicon from "@/assets/images/Favicon.png";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     "Chic Tops",
     "Activewear for Women",
     "NoveraFits",
-    "Fashion Trends 2024"
+    "Fashion Trends 2026"
   ],
   authors: [{ name: "NoveraFits" }],
   creator: "NoveraFits",
@@ -82,6 +83,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );

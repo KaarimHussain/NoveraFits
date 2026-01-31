@@ -3,12 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyC0piVfT5d__0Uxelv3W8esqZd2k7iTOh4",
+  authDomain: "novera-fits.firebaseapp.com",
+  projectId: "novera-fits",
+  storageBucket: "novera-fits.firebasestorage.app",
+  messagingSenderId: "540880173591",
+  appId: "1:540880173591:web:030335e567880426413a52",
+  measurementId: "G-EG8P8FFC2K"
 };
 
 // Initialize Firebase

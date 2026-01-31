@@ -1,26 +1,54 @@
+"use client";
+
+import { useEffect, useState, use } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { Gallery } from "@/components/product/Gallery";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { ProductTabs } from "@/components/product/ProductTabs";
 import { NewArrivals } from "@/components/home/NewArrivals";
+import { Loader2 } from "lucide-react";
 
-// Using NewArrivals as "You might also like" section for now
+export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
+    const [product, setProduct] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-    // Mock images based on the ID or just generic
-    const images = [
-        "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1551488852-080175b21029?q=80&w=1000&auto=format&fit=crop",
-    ];
+    useEffect(() => {
+        const fetchProduct = async () => {
+            const docRef = doc(db, "products", id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setProduct({ id: docSnap.id, ...docSnap.data() });
+            }
+            setLoading(false);
+        };
+        fetchProduct();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    if (!product) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <p>Product not found</p>
+            </div>
+        );
+    }
 
     return (
         <div className="container-width py-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-                <Gallery images={images} />
-                <ProductInfo />
+                <Gallery images={product.images || []} />
+                <ProductInfo product={product} />
             </div>
-            <ProductTabs />
+            <ProductTabs productId={product.id} description={product.description} details={product.details} />
 
             <div className="mt-20 border-t pt-10">
                 <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>

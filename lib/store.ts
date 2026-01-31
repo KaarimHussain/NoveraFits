@@ -14,8 +14,18 @@ export interface CartItem {
     quantity: number;
 }
 
-// Cart store interface
-interface CartStore {
+// Favorite item interface
+export interface FavoriteItem {
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+    category?: string;
+}
+
+// App store interface
+interface AppStore {
+    // Cart
     items: CartItem[];
     addItem: (item: CartItem) => void;
     removeItem: (id: string, size: string, color: string) => void;
@@ -23,29 +33,34 @@ interface CartStore {
     clearCart: () => void;
     getTotal: () => number;
     getItemCount: () => number;
+
+    // Favorites
+    favorites: FavoriteItem[];
+    addFavorite: (item: FavoriteItem) => void;
+    removeFavorite: (id: string) => void;
+    toggleFavorite: (item: FavoriteItem) => void;
+    isFavorite: (id: string) => boolean;
 }
 
-// Create cart store with persistence
-export const useCartStore = create<CartStore>()(
+// Create store with persistence
+export const useCartStore = create<AppStore>()(
     persist(
         (set, get) => ({
+            // --- Cart State ---
             items: [],
 
             addItem: (item: CartItem) => {
                 set((state) => {
-                    // Check if item with same id, size, and color exists
                     const existingIndex = state.items.findIndex(
                         (i) => i.id === item.id && i.size === item.size && i.color === item.color
                     );
 
                     if (existingIndex !== -1) {
-                        // Update quantity if item exists
                         const updatedItems = [...state.items];
                         updatedItems[existingIndex].quantity += item.quantity;
                         return { items: updatedItems };
                     }
 
-                    // Add new item
                     return { items: [...state.items, item] };
                 });
             },
@@ -87,9 +102,39 @@ export const useCartStore = create<CartStore>()(
             getItemCount: () => {
                 return get().items.reduce((count, item) => count + item.quantity, 0);
             },
+
+            // --- Favorites State ---
+            favorites: [],
+
+            addFavorite: (item: FavoriteItem) => {
+                set((state) => {
+                    if (state.favorites.some((i) => i.id === item.id)) return state;
+                    return { favorites: [...state.favorites, item] };
+                });
+            },
+
+            removeFavorite: (id: string) => {
+                set((state) => ({
+                    favorites: state.favorites.filter((item) => item.id !== id),
+                }));
+            },
+
+            toggleFavorite: (item: FavoriteItem) => {
+                const { favorites } = get();
+                const exists = favorites.some((f) => f.id === item.id);
+                if (exists) {
+                    set({ favorites: favorites.filter((f) => f.id !== item.id) });
+                } else {
+                    set({ favorites: [...favorites, item] });
+                }
+            },
+
+            isFavorite: (id: string) => {
+                return get().favorites.some((item) => item.id === id);
+            },
         }),
         {
-            name: 'novera-cart-storage',
+            name: 'novera-storage', // Updated name to reflect it stores both
         }
     )
 );
